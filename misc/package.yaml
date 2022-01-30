@@ -59,7 +59,17 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
-    
+  example4:
+    main:                Example4.hs
+    other-modules:       []
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - misc
+
 tests:
   misc-test:
     main:                Spec.hs
