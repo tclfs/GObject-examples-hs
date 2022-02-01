@@ -16,8 +16,8 @@ import Foreign.Ptr
 
 showRefCount :: Object -> IO ()
 showRefCount obj = do
-  t <- gtypeFromInstance obj
-  if t == gtypeObject then
+  b <- checkInstanceType obj gtypeObject
+  if b then
     withForeignPtr (managedForeignPtr . toManagedPtr $ obj)
       (\p-> do
           let pr = p `plusPtr` #{offset GObject, ref_count}
