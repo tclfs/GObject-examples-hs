@@ -89,6 +89,26 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+  toupper1:
+    main:                ToUpper1.hs
+    other-modules:       []
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - misc
+  toupper2:
+    main:                ToUpper2.hs
+    other-modules:       []
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - misc
 tests:
   misc-test:
     main:                Spec.hs
