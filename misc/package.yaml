@@ -39,6 +39,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   example2:
     main:                Example2.hs
     other-modules:       []
@@ -49,6 +52,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   example3:
     main:                Example3.hs
     other-modules:       []
@@ -59,6 +65,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   example4:
     main:                Example4.hs
     other-modules:       []
@@ -69,6 +78,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   example5:
     main:                Example5.hs
     other-modules:       []
@@ -79,6 +91,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   typename:
     main:                TypeName.hs
     other-modules:       []
@@ -89,6 +104,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   toupper1:
     main:                ToUpper1.hs
     other-modules:       []
@@ -99,6 +117,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
   toupper2:
     main:                ToUpper2.hs
     other-modules:       []
@@ -109,6 +130,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021
+
 tests:
   misc-test:
     main:                Spec.hs
@@ -119,3 +143,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - misc
+    verbatim:
+      default-language: GHC2021

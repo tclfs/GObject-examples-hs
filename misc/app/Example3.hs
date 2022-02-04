@@ -3,16 +3,9 @@
 {-# LANGUAGE OverloadedLabels #-}
 
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableSuperClasses #-}
 {-# LANGUAGE DataKinds #-}
-
-{-# LANGUAGE TypeApplications #-}
 
 module Main where
 
