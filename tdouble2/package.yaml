@@ -26,6 +26,8 @@ dependencies:
 
 library:
   source-dirs: src
+  verbatim:
+    default-language: GHC2021
 
 executables:
   tdouble2:
@@ -37,6 +39,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - tdouble2
+    verbatim:
+      default-language: GHC2021
 
 tests:
   tdouble2-test:
@@ -48,3 +52,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - tdouble2
+    verbatim:
+      default-language: GHC2021
