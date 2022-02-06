@@ -18,8 +18,10 @@ showRefCount :: Object -> IO ()
 showRefCount obj = do
   b <- checkInstanceType obj gtypeObject
   if b then
-    withForeignPtr (managedForeignPtr . toManagedPtr $ obj)
+    withManagedPtr obj
       (\p-> do
+          {- Users should not use ref_count member in their program. -}
+          {- This is only for demonstration. -}
           let pr = p `plusPtr` #{offset GObject, ref_count}
           ref <- peek pr :: IO CUInt
           putStrLn $ "Reference count is " <> show ref <> ".";
