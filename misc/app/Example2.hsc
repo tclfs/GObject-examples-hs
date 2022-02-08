@@ -1,18 +1,15 @@
-{-# LANGUAGE OverloadedLabels #-}
-
 module Main where
 
 #include <glib-object.h>
 
 import Data.GI.Base 
-import Data.GI.Base.BasicTypes
 import Data.GI.Base.GType
 import Data.GI.Base.GObject
 import GI.GObject
 import Foreign.C.Types
 import Foreign.Storable
-import Foreign.ForeignPtr 
 import Foreign.Ptr
+import Control.Monad
 
 showRefCount :: Object -> IO ()
 showRefCount obj = do
@@ -29,12 +26,18 @@ showRefCount obj = do
   else
     putStrLn "Instance is not GObject."  
 
+-- Why redefine objectRef, the reason follows https://github.com/haskell-gi/haskell-gi/issues/377
+foreign import ccall "g_object_ref" c_g_object_ref :: Ptr a -> IO (Ptr a)
+
+g_object_ref :: GObject o => o -> IO ()
+g_object_ref obj = void $ withManagedPtr obj c_g_object_ref
+
 main :: IO ()
 main = do
   instance1 <- new Object []
   putStrLn "Call g_object_new."
   showRefCount instance1
-  objectRef instance1 -- why increasing by 2?
+  g_object_ref instance1
   putStrLn "Call g_object_ref."
   showRefCount instance1
   objectUnref instance1
