@@ -1,7 +1,5 @@
 module Main where
 
-#include <glib-object.h>
-
 import Data.GI.Base 
 import Data.GI.Base.GType
 import Data.GI.Base.GObject
@@ -10,6 +8,8 @@ import Foreign.C.Types
 import Foreign.Storable
 import Foreign.Ptr
 import Control.Monad
+
+#include <glib-object.h>
 
 showRefCount :: Object -> IO ()
 showRefCount obj = do
