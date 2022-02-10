@@ -4,8 +4,6 @@ module Main where
 
 import Data.GI.Base
 import Data.GI.Base.GType
-import Data.GI.Base.GObject
-import GI.GObject
 import Text.Printf
 
 main :: IO ()

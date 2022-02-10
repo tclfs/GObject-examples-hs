@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE OverloadedLabels #-}
 
@@ -21,9 +20,7 @@ import           Data.GI.Base
 import           Data.GI.Base.GObject 
 import qualified Data.GI.Base.Overloading      as O
 import           GHC.OverloadedLabels          as OL
-#if MIN_VERSION_base(4,13,0)
 import qualified GHC.Records as R
-#endif
 
 import           Control.Monad
 import           Control.Monad.IO.Class
@@ -72,7 +69,6 @@ type instance O.SignalList TDouble = O.SignalList GObject.Object
 type family ResolveTDoubleMethod t o where
   ResolveTDoubleMethod t o = GObject.ResolveObjectMethod t o
 
-#if MIN_VERSION_base(4,13,0)
 {- The circular instance trick is to avoid the liberal coverage
 condition. We should be using DYSFUNCTIONAL pragmas instead, once
 those are implemented:
@@ -83,7 +79,6 @@ instance (info ~ ResolveTDoubleMethod method TDouble,
           R.HasField method TDouble p)
     => R.HasField method TDouble p where
   getField = O.overloadedMethod @info
-#endif
 
 instance (info ~ ResolveTDoubleMethod t TDouble,
           O.OverloadedMethod info TDouble p)
