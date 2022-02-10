@@ -6,6 +6,8 @@
 {-# LANGUAGE UndecidableSuperClasses #-}
 {-# LANGUAGE DataKinds #-}
 
+#include <glib-object.h>
+
 module TDouble 
     ( TDouble(..)
     , IsTDouble
