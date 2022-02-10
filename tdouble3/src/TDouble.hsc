@@ -181,20 +181,15 @@ tDoubleMul = tDoubleBinaryOp (*)
 tDoubleDiv :: TDouble -> TDouble -> IO TDouble
 tDoubleDiv self other = do
   oValue <- tDoubleGetValue other
-  if oValue == 0 then do
-    signalId <- readIORef gTDoubleSignal
-    
+  if oValue == 0 then do    
     withManagedPtr self 
       (\obj->do
-        itype <- glibType @TDouble
-        gvalueSelf <- buildGValue itype set_object obj
-        GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
-        tDoubleNew 0
+          itype <- glibType @TDouble
+          signalId <- readIORef gTDoubleSignal
+          gvalueSelf <- buildGValue itype set_object obj
+          GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
+          tDoubleNew 0
         )
-
-    -- gvalueSelf <- buildGValue (glibType @TDouble) set_object self
-    -- GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
-    -- tDoubleNew 0
   else do
     sValue <- tDoubleGetValue self
     tDoubleNew $ sValue / oValue
