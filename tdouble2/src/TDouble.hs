@@ -120,8 +120,15 @@ tDoubleSub = tDoubleBinaryOp (-)
 tDoubleMul :: TDouble -> TDouble -> IO TDouble
 tDoubleMul = tDoubleBinaryOp (*)
 
-tDoubleDiv :: TDouble -> TDouble -> IO TDouble
-tDoubleDiv = tDoubleBinaryOp (/)
+tDoubleDiv :: TDouble -> TDouble -> IO (Maybe TDouble)
+tDoubleDiv self other = do
+  oValue <- tDoubleGetValue other
+  if oValue == 0 then do
+    return Nothing 
+  else do
+    sValue <- tDoubleGetValue self
+    ret <- tDoubleNew $ sValue / oValue
+    return $ Just ret
 
 tDoubleUminus :: TDouble -> IO TDouble
 tDoubleUminus self = do

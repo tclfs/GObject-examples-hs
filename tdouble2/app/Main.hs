@@ -2,6 +2,7 @@ module Main where
 
 import TDouble
 import Text.Printf
+import Data.Maybe
 
 tPrint :: String -> TDouble -> TDouble -> TDouble -> IO ()
 tPrint op d1 d2 d3 = do
@@ -24,7 +25,9 @@ main = do
   tPrint "*" d1 d2 d3
 
   d3 <- tDoubleDiv d1 d2
-  tPrint "/" d1 d2 d3
+  case d3 of
+    Just obj -> tPrint "/" d1 d2 obj
+    Nothing  -> return ()
 
   d3 <- tDoubleUminus d1
   v1 <- tDoubleGetValue d1

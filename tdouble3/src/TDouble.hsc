@@ -173,7 +173,7 @@ tDoubleSub = tDoubleBinaryOp (-)
 tDoubleMul :: TDouble -> TDouble -> IO TDouble
 tDoubleMul = tDoubleBinaryOp (*)
 
-tDoubleDiv :: TDouble -> TDouble -> IO TDouble
+tDoubleDiv :: TDouble -> TDouble -> IO (Maybe TDouble)
 tDoubleDiv self other = do
   oValue <- tDoubleGetValue other
   if oValue == 0 then do    
@@ -183,11 +183,12 @@ tDoubleDiv self other = do
           signalId <- readIORef gTDoubleSignal
           gvalueSelf <- buildGValue itype set_object obj
           GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
-          tDoubleNew 0
+          return Nothing
         )
   else do
     sValue <- tDoubleGetValue self
-    tDoubleNew $ sValue / oValue
+    ret <- tDoubleNew $ sValue / oValue
+    return $ Just ret
 
 tDoubleUminus :: TDouble -> IO TDouble
 tDoubleUminus self = do
