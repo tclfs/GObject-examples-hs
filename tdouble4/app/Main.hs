@@ -17,10 +17,6 @@ tPrint op d1 d2 d3 = do
   v3 <- tDoubleGetValue d3
   putStrLn $ printf "%f %s %f = %f" v1 op v2 v3
 
-type DivByZeroCb = Ptr TDouble -> Ptr () -> IO ()
-foreign import ccall "wrapper"
-  mkDivByZeroCb :: DivByZeroCb -> IO (FunPtr DivByZeroCb)
-
 main :: IO ()
 main = do
   d1 <- tDoubleNew 10.0
