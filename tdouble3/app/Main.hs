@@ -41,7 +41,7 @@ main = do
 
   withManagedPtr d1 $ \obj -> do
     cb <- mkDivByZeroCb $ \_ _ -> putStrLn "\nError: division by zero.\n"
-    connectSignalFunPtr d1 "div-by-zero" cb SignalConnectAfter Nothing 
+    connectSignalFunPtr d1 "div-by-zero" cb SignalConnectBefore Nothing 
   tDoubleSetValue d2 0
   d3 <- tDoubleDiv d1 d2
   case d3 of
