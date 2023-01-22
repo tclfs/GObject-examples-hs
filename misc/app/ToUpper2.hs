@@ -1,3 +1,3 @@
 {-# LANGUAGE CPP #-}
 
-#include "toUpper1.hs"
+#include "ToUpper1.hs"
