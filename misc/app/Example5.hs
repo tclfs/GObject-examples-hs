@@ -17,6 +17,7 @@ import qualified GHC.Records as R
 import           Control.Monad
 import           Control.Monad.IO.Class
 import qualified GI.GObject as GObject
+import Text.Printf (printf)
 
 newtype TDouble = TDouble (ManagedPtr TDouble)
 
@@ -87,11 +88,13 @@ main :: IO ()
 main = do
   dtype <- glibType @TDouble
   if dtype /= GType 0 then
-    putStrLn $ "Registration was a success. The type is " <> show dtype <> "."
+    putStrLn $ "Registration was a success. The type is " <> printf "0x%lx" (gtypeToCGType dtype) <> "."
   else
     putStrLn "Registration failed."
   
   d <- new TDouble []
+  withManagedPtr d (\obj->putStrLn $ "Instantiation was a success. The instance address is " <> show obj)
+ 
   b1 <- checkInstanceType d dtype
   if b1 then
     putStrLn "d is TDouble instance."
@@ -104,3 +107,5 @@ main = do
     putStrLn "d is GObject instance."
   else
     putStrLn "d is not GObject instance."
+  
+  return ()
