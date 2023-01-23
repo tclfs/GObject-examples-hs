@@ -35,7 +35,6 @@ instance DerivedGObject TDouble where
 
   objectTypeName = "TDouble"
 
-  objectClassInit :: GObjectClass -> IO ()
   objectClassInit = tDoubleClassInit
   objectInstanceInit = tDoubleInstanceInit
 
