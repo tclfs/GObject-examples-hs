@@ -43,6 +43,8 @@ import Foreign.Ptr
 import Data.Bits
 import Data.IORef
 import System.IO.Unsafe
+
+-- g_signal_newv is marked as not introspectable (not exposed to bindings).
 -- guint
 -- g_signal_newv (
 --   const gchar* signal_name,
@@ -186,12 +188,20 @@ tDoubleMul = tDoubleBinaryOp (*)
 tDoubleDiv :: TDouble -> TDouble -> IO (Maybe TDouble)
 tDoubleDiv self other = do
   oValue <- tDoubleGetValue other
-  if oValue == 0 then do    
+  if oValue == 0 then do
+    -- the verbose version    
+    -- withManagedPtr self 
+    --   (\obj->do
+    --       itype <- glibType @TDouble
+    --       signalId <- readIORef gTDoubleSignal
+    --       gvalueSelf <- buildGValue itype set_object obj
+    --       GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
+    --       return Nothing
+    --     )
     withManagedPtr self 
       (\obj->do
-          itype <- glibType @TDouble
           signalId <- readIORef gTDoubleSignal
-          gvalueSelf <- buildGValue itype set_object obj
+          gvalueSelf <- toGValue obj
           GObject.signalEmitv [gvalueSelf] (fromIntegral signalId) 0
           return Nothing
         )
