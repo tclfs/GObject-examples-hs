@@ -11,15 +11,17 @@ import Data.GI.Base.GClosure
 import Data.GI.Base.ShortPrelude
 import Data.Text
 import Foreign.Ptr
-import Data.Foldable
 import GI.GObject.Objects.Object
+import Data.Foldable
+import GObjectExtra
+import Control.Monad
 
 tPrint :: String -> TDouble -> TDouble -> TDouble -> IO ()
 tPrint op d1 d2 d3 = do
   v1 <- d1 `get` #value
   v2 <- d2 `get` #value
   v3 <- d3 `get` #value
-  putStrLn $ printf "%d %s %d = %d" v1 op v2 v3
+  putStrLn $ printf "%f %s %f = %f" v1 op v2 v3
 
 type NotifyCb = Ptr TDouble -> Ptr GParamSpec -> Ptr () -> IO ()
 foreign import ccall "wrapper"
@@ -27,18 +29,17 @@ foreign import ccall "wrapper"
 
 main :: IO ()
 main = do
-  d1 <- new TDouble [ #value := 10]
-  d2 <- new TDouble [ #value := 20]
+  d1 <- new TDouble [ #value := 10.0]
+  d2 <- new TDouble [ #value := 20.0]
   
   cb <- mkNotifyCb $ \ptDouble pspec _ -> do
     tDouble <- TDouble <$> newManagedPtr_ ptDouble
     spec <- GParamSpec <$> newManagedPtr_ pspec
     name <- paramSpecGetName spec
-    if name == "value" then do
-      val <- tDouble `get` #value
-      putStr $ printf "Property \"%s\" is set to %d.\n" (unpack name) val
-    else return ()
-  
+    when (name == "value")
+      $ do val <- tDouble `get` #value
+           putStr $ printf "Property \"%s\" is set to %f.\n" (unpack name) val
+    
   connectSignalFunPtr d1 "notify::value" cb SignalConnectBefore Nothing
 
   d3 <- tDoubleAdd d1 d2
@@ -60,8 +61,8 @@ main = do
   d3 <- tDoubleUminus d1
   v1 <- d1 `get` #value
   v3 <- d3 `get` #value
-  putStrLn $ printf "-%d = %d" v1 v3
+  putStrLn $ printf "-%f = %f" v1 v3
 
-  -- d1 `set` [#value := 100]
-  -- the line above does not emit notify signal
-  (toGValue (100 :: CInt)) >>= (objectSetProperty d1 "value")
+  d1 `set` [#value := 100.0]
+  -- another method also works
+  --(toGValue (100 :: CDouble)) >>= (objectSetProperty d1 "value")

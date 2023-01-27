@@ -27,15 +27,15 @@ import           Data.GI.Base.GValue
 import           Data.GI.Base.GObject
 import           Data.GI.Base.GClosure
 import qualified Data.GI.Base.Overloading      as O
-import           Data.GI.Base.GParamSpec (CIntPropertyInfo(..), GParamFlag(..))
-import Data.GI.Base.Attributes (AttrInfo(..), AttrOpTag(..))
+import           Data.GI.Base.GParamSpec (GParamFlag(..))
+import Data.GI.Base.Attributes
 import           GHC.OverloadedLabels          as OL
 import qualified GHC.Records as R
 
 import           Control.Monad
 import           Control.Monad.IO.Class
 import qualified GI.GObject as GObject
-
+import Data.GI.Base.GType
 
 import Foreign.C.Types
 import Foreign.C.String
@@ -43,8 +43,10 @@ import Foreign.Storable
 import Foreign.Ptr
 import Data.Bits
 import Data.IORef
-import Data.Coerce (coerce)
+import Data.Coerce
 import System.IO.Unsafe
+
+import GObjectExtra
 
 -- g_signal_newv is marked as not introspectable (not exposed to bindings).
 -- guint
@@ -76,7 +78,7 @@ instance TypedObject TDouble where
 instance GObject TDouble
 
 newtype TDoublePrivate = 
-  TDoublePrivate { value :: Int }
+  TDoublePrivate { value :: Double }
 
 instance DerivedGObject TDouble where
   type GObjectParentType  TDouble = GObject.Object
@@ -120,7 +122,7 @@ tDoubleClassInit klass = do
                                     nullPtr
     writeIORef gTDoubleSignal tDoubleSignal
 
-  gobjectInstallCIntProperty klass valueProperty
+  gobjectInstallCDoubleProperty klass valueProperty
 
 tDoubleInstanceInit :: GObjectClass -> TDouble -> IO TDoublePrivate
 tDoubleInstanceInit klass t = return $ TDoublePrivate 0
@@ -135,31 +137,30 @@ instance (GObject o, O.IsDescendantOf TDouble o) => IsTDouble o
 toTDouble :: (MonadIO m, IsTDouble o) => o -> m TDouble
 toTDouble = liftIO . unsafeCastTo TDouble
 
-valueProperty :: CIntPropertyInfo TDouble
+valueProperty :: CDoublePropertyInfo TDouble
 valueProperty =
-  CIntPropertyInfo { name   = "value"
-                   , nick   = "val"
-                   , defaultValue = 0
-                   , minValue = Nothing
-                   , maxValue = Nothing
-                   , blurb  = "Double value"
-                   , setter = setValueCDouble
-                   , getter = getValueCDouble
-                   , flags  = Just [GParamReadable, GParamWritable]
-                   }
+  CDoublePropertyInfo { name   = "value"
+                      , nick   = "val"
+                      , blurb  = "Double value"
+                      , setter = setValueCDouble
+                      , getter = getValueCDouble
+                      , flags  = Just [GParamReadable, GParamWritable]
+                      , defaultValue = 0.0
+                      , minValue = - #const G_MAXDOUBLE
+                      , maxValue = #const G_MAXDOUBLE
+               }
 
-setValueCDouble :: TDouble -> CInt -> IO ()
-setValueCDouble tDouble d = setValue tDouble (fromIntegral d)
+setValueCDouble :: TDouble -> CDouble -> IO ()
+setValueCDouble tDouble d =  setValue tDouble (realToFrac d)
 
-getValueCDouble :: TDouble -> IO CInt
-getValueCDouble tDouble = fromIntegral <$> value <$> gobjectGetPrivateData tDouble
+getValueCDouble :: TDouble -> IO CDouble
+getValueCDouble tDouble = realToFrac <$> value <$> gobjectGetPrivateData tDouble
 
-setValue :: TDouble -> Int -> IO ()
+setValue :: TDouble -> Double -> IO ()
 setValue tDouble newValue = do
   gobjectModifyPrivateData tDouble
                (\priv -> priv {value = newValue})
-
-
+  
 -- Tell the type system about the "value" property, so we can
 -- use the overloading syntax.
 data ValueAttrInfo
@@ -178,7 +179,7 @@ instance AttrInfo ValueAttrInfo where
 
   -- Which type does 'get' on the property return. By default this is
   -- also the type that 'set' and 'new' accept.
-  type AttrGetType ValueAttrInfo = Int
+  type AttrGetType ValueAttrInfo = Double
 
   -- Text description for the attribute, for use in error messages.
   type AttrLabel ValueAttrInfo = "value"
@@ -191,12 +192,13 @@ instance AttrInfo ValueAttrInfo where
                       gobjectGetPrivateData (coerce tDouble :: TDouble)
 
   -- Set the value of the argument.
-  attrSet tDouble val = setValue (coerce tDouble :: TDouble) val
+  attrSet tDouble val = --setValue (coerce tDouble :: TDouble) val
+    (toGValue $ (realToFrac val :: CDouble)) >>= (GObject.objectSetProperty (coerce tDouble :: TDouble) "value")
 
   -- Construct a 'GValue' containing the argument, tagged by the
   -- associated property name.
   attrConstruct val = do
-    newValue <- toGValue (fromIntegral val :: CInt)
+    newValue <- toGValue val--(realToFrac val :: CDouble)
     return $ GValueConstruct "value" newValue
 
 -- Allow the overloaded attribute syntax to work. In this case we
@@ -239,7 +241,7 @@ tDoubleNew = do
   gobjectModifyPrivateData d (\x -> x { value = 0 })
   return d
 
-tDoubleNewWithValue :: Int -> IO TDouble
+tDoubleNewWithValue :: Double -> IO TDouble
 tDoubleNewWithValue val = do
   d <- new TDouble []
   gobjectModifyPrivateData d (\x -> x { value = val })
@@ -260,7 +262,7 @@ tDoubleDiv :: TDouble -> TDouble -> IO (Maybe TDouble)
 tDoubleDiv self other = do
   oValue <- other `get` ##value
   if oValue == 0 then do
-    -- the verbose version      
+    -- the verbose version       
     -- withManagedPtr self 
     --   (\obj->do
     --       itype <- glibType @TDouble
@@ -278,7 +280,7 @@ tDoubleDiv self other = do
         )
   else do
     sValue <-  self `get` ##value
-    ret <- tDoubleNewWithValue $ sValue `div` oValue
+    ret <- tDoubleNewWithValue $ sValue / oValue
     return $ Just ret
 
 tDoubleUminus :: TDouble -> IO TDouble
@@ -286,7 +288,7 @@ tDoubleUminus self = do
   val <- self `get` ##value
   tDoubleNewWithValue (-val)
 
-tDoubleBinaryOp :: (Int -> Int -> Int) -> TDouble -> TDouble -> IO TDouble
+tDoubleBinaryOp :: (Double -> Double -> Double) -> TDouble -> TDouble -> IO TDouble
 tDoubleBinaryOp op self other = do
   sValue <- self `get` ##value
   oValue <- other `get` ##value
