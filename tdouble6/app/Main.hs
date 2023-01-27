@@ -61,7 +61,7 @@ main = do
   d3 <- tDoubleUminus d1
   v1 <- d1 `get` #value
   v3 <- d3 `get` #value
-  putStrLn $ printf "-%f = %f" v1 v3
+  putStrLn $ printf "-(%f) = %f" v1 v3
 
   d1 `set` [#value := 100.0]
   -- another method also works
