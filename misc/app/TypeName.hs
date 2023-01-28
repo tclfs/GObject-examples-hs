@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedLabels #-}
-
 module Main where
 
 import Data.GI.Base
