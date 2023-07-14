@@ -45,4 +45,6 @@ main = do
   showRefCount instance1
   objectUnref instance1
   putStrLn "Call g_object_unref."
-  showRefCount instance1
+  putStrLn "Now the reference count is zero and the instance is destroyed."
+  putStrLn "The instance memories are possibly returned to the system."
+  putStrLn "Therefore, the access to the same address may cause a segmentation error."
