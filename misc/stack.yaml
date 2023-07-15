@@ -10,7 +10,6 @@ extra-deps:
 - gi-glib-2.0.29
 
 system-ghc: true
-install-ghc: false
 
 ghc-options:
   '$everything': -haddock

@@ -21,7 +21,6 @@ import qualified Data.GI.Base.Overloading      as O
 import           GHC.OverloadedLabels          as OL
 import qualified GHC.Records as R
 
-import           Control.Monad
 import           Control.Monad.IO.Class
 import qualified GI.GObject as GObject
 
