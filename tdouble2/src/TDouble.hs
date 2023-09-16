@@ -103,10 +103,10 @@ tDoubleNew val = do
 
 {-  getter and setter -}
 tDoubleGetValue :: TDouble -> IO Double
-tDoubleGetValue d = value <$> gobjectGetPrivateData d
+tDoubleGetValue self = value <$> gobjectGetPrivateData self
 
 tDoubleSetValue :: TDouble -> Double -> IO ()
-tDoubleSetValue d val = gobjectModifyPrivateData d (\x -> x { value = val })
+tDoubleSetValue self val = gobjectModifyPrivateData self (\x -> x { value = val })
 
 {- arithmetic operator -}
 {- These operators create a new instance and return a pointer to it. -}

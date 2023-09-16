@@ -96,7 +96,7 @@ tDoubleNew val = do
   return d
 
 tDoubleGetValue :: TDouble -> IO Double
-tDoubleGetValue d = value <$> gobjectGetPrivateData d
+tDoubleGetValue self = value <$> gobjectGetPrivateData self
 
 tDoubleSetValue :: TDouble -> Double -> IO ()
-tDoubleSetValue d val = gobjectModifyPrivateData d (\x -> x { value = val })
+tDoubleSetValue self val = gobjectModifyPrivateData self (\x -> x { value = val })
